@@ -1,5 +1,7 @@
 import pyglet
 from pyglet.window import key
+from random import random, uniform
+
 
 window = pyglet.window.Window(width=600, height=600)
 megaman = pyglet.resource.image('mega_man.jpg')
@@ -25,6 +27,7 @@ class GameState(object):
         # instantiate coroutine
         self.tick = self.tick()
         self.walk = self.walk()
+        self.random_teleport = self.random_teleport()
 
     def send(self, arg):
         self.tick.send(arg)
@@ -34,6 +37,18 @@ class GameState(object):
         while True:
             symbol = yield
             self.walk.send(symbol)
+            self.random_teleport.send(symbol)
+
+    @coroutine
+    def random_teleport(self):
+        while True:
+            no_use = yield
+
+            rnd = random()
+            if rnd < 0.5:
+                self.x = uniform(0,window.width)
+                self.y = uniform(0,window.height)
+
 
     @coroutine
     def walk(self):
