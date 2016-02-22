@@ -1,21 +1,12 @@
 import pyglet
 from pyglet.window import key
 from random import random, uniform
-
+from chaowei.dec import coroutine
 
 window = pyglet.window.Window(width=600, height=600)
 megaman = pyglet.resource.image('mega_man.jpg')
 megaman.anchor_x = megaman.width >> 1
 megaman.anchor_y = megaman.height >> 1
-
-
-def coroutine(func):
-    def start(*args, **kwargs):
-        cr = func(*args, **kwargs)
-        cr.next()
-        return cr
-
-    return start
 
 
 class GameState(object):
