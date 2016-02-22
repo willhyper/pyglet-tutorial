@@ -1,5 +1,6 @@
 # MEGA MAN DODGE!
 megaman.py is Randy's very ghetto game.
+
 wander.py is my learning experiment.
 
 ## current development
@@ -11,12 +12,17 @@ wander.py is my learning experiment.
 3.  pip
 4.  'pip freeze' gives
 
+cwcutils==0.1.1
+
 pyglet==1.2.4
+
 wheel==0.24.0
 
+
 ## Installation
-1.  Create a virtualenv for the game using python 2.7. E.g. run `virtualenv --python <path-to-python2> MYGAME`
-2.  Run `pip install pyglet`
+1.  Create a virtualenv for the game using python 2.7.
+1.1  run `virtualenv --python $(which python2) MYGAME`
+2.  Run `pip install pyglet cwcutils`
 3.  Run `python wander.py`
 4.  Enjoy the game!
 

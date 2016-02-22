@@ -1,7 +1,7 @@
 import pyglet
 from pyglet.window import key
 from random import random, uniform
-from chaowei.dec import coroutine
+from cwcutils.dec import coroutine
 
 window = pyglet.window.Window(width=600, height=600)
 megaman = pyglet.resource.image('mega_man.jpg')
