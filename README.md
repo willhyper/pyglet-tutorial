@@ -13,17 +13,17 @@ wander.py is my learning experiment.
 4.  'pip freeze' gives
 
 cwcutils==0.1.1
-
 pyglet==1.2.4
-
 wheel==0.24.0
 
 
 ## Installation
-1.  Create a virtualenv for the game using python 2.7.
-1.1  run `virtualenv --python $(which python2) MYGAME`
-2.  Run `pip install pyglet cwcutils`
-3.  Run `python wander.py`
+1.  Create a virtualenv for the game using python 2.7. `virtualenv --python $(which python2) MYGAME`
+2.  `cd MYGAME`
+3.  `source bin/activate`
+3.  `pip install pyglet cwcutils`
+3.  `git clone https://github.com/willhyper/pyglet-tutorial.git`
+3.  `python pyglet-tutorial/wander.py`
 4.  Enjoy the game!
 
 ## How to play
