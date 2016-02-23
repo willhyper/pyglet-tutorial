@@ -1,7 +1,7 @@
 import pyglet
 from pyglet.window import key
-from random import random, uniform
-from cwcutils.dec import coroutine, group
+from random import random, uniform, randint
+from cwcutils.dec import coroutine, group, synchronized
 
 window = pyglet.window.Window(width=600, height=600)
 megaman = pyglet.resource.image('mega_man.jpg')
@@ -18,16 +18,28 @@ class GameState(object):
         # instantiate coroutine
         self.tick = self.tick()
         self.walk = self.walk()
+        self.events_on_queue = {}
 
     def send(self, arg):
         self.tick.send(arg)
 
     @coroutine
+    @synchronized
     def tick(self):
         while True:
             key = yield
             self.walk.send(key)
-            self.events(key)
+            self.event_generator(key)
+
+            eventname_to_delete = []
+            for eventname, event in self.events_on_queue.iteritems():
+                try:
+                    event.send(key)
+                except StopIteration:
+                    eventname_to_delete += [eventname]
+
+            for name in eventname_to_delete:
+                del self.events_on_queue[name]
 
     @coroutine
     def walk(self):
@@ -48,10 +60,18 @@ class GameState(object):
                 self.y -= step if self.y >= 0 else 0
                 self.count += 1
 
-    def events(self, key):
+    def event_generator(self, key):
         # not necessarily to use key
-        for f in walkEvents.members.values():
-            f()
+        # randomly generate coroutined events, putting them into self.events_on_queue
+
+        f_candidates = [f for f in walkEvents.members if f.__name__ not in self.events_on_queue.keys()]
+        for f in f_candidates:
+            if random() < 0.2:
+                duration = randint(1,10)
+                cf = coroutine(f)
+                cf = cf(duration)
+                self.events_on_queue.update({f.__name__: cf})
+
 
 
 gs = GameState()
@@ -75,11 +95,17 @@ walkEvents = group('walkEvents')
 
 
 @walkEvents
-def random_teleport():
-    rnd = random()
-    if rnd < 0.5:
-        gs.x = uniform(0, window.width)
-        gs.y = uniform(0, window.height)
+def random_teleport(duration):
+    print('random_teleport effect starts for %d steps' % duration)
+    d = 0
+    while d < duration:
+        key = yield
+        d += 1
+        if random() < 0.99:
+            gs.x = uniform(0, window.width)
+            gs.y = uniform(0, window.height)
+
+    print('random_teleport effect ends')
 
 
 pyglet.app.run()
