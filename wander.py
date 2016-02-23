@@ -1,7 +1,7 @@
 import pyglet
 from pyglet.window import key
 from random import random, uniform, randint
-from cwcutils.dec import coroutine, group, synchronized
+from cwcutils.dec import coroutine, group
 
 window = pyglet.window.Window(width=600, height=600)
 megaman = pyglet.resource.image('mega_man.jpg')
@@ -24,7 +24,6 @@ class GameState(object):
         self.tick.send(arg)
 
     @coroutine
-    @synchronized
     def tick(self):
         while True:
             key = yield
@@ -100,10 +99,10 @@ def random_teleport(duration):
     d = 0
     while d < duration:
         key = yield
-        d += 1
         if random() < 0.99:
             gs.x = uniform(0, window.width)
             gs.y = uniform(0, window.height)
+        d += 1
 
     print('random_teleport effect ends')
 
