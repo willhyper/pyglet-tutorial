@@ -1,7 +1,7 @@
 import pyglet
 from pyglet.window import key
 from random import random, uniform
-from cwcutils.dec import coroutine
+from cwcutils.dec import coroutine, group
 
 window = pyglet.window.Window(width=600, height=600)
 megaman = pyglet.resource.image('mega_man.jpg')
@@ -18,7 +18,6 @@ class GameState(object):
         # instantiate coroutine
         self.tick = self.tick()
         self.walk = self.walk()
-        self.random_teleport = self.random_teleport()
 
     def send(self, arg):
         self.tick.send(arg)
@@ -26,20 +25,14 @@ class GameState(object):
     @coroutine
     def tick(self):
         while True:
-            symbol = yield
-            self.walk.send(symbol)
-            self.random_teleport.send(symbol)
+            key = yield
+            self.walk.send(key)
+            self.events(key)
 
-    @coroutine
-    def random_teleport(self):
-        while True:
-            no_use = yield
-
-            rnd = random()
-            if rnd < 0.5:
-                self.x = uniform(0,window.width)
-                self.y = uniform(0,window.height)
-
+    def events(self, key):
+        # not necessarily to use key
+        for f in walkEvents.members.values():
+            f()
 
     @coroutine
     def walk(self):
@@ -61,7 +54,6 @@ class GameState(object):
                 self.count += 1
 
 
-
 gs = GameState()
 walk_count = pyglet.text.Label(str(gs.count), x=0, y=0)
 
@@ -77,6 +69,17 @@ def on_draw():
     megaman.blit(gs.x, gs.y)
     walk_count.text = str(gs.count)
     walk_count.draw()
+
+
+walkEvents = group('walkEvents')
+
+
+@walkEvents
+def random_teleport():
+    rnd = random()
+    if rnd < 0.5:
+        gs.x = uniform(0, window.width)
+        gs.y = uniform(0, window.height)
 
 
 pyglet.app.run()
