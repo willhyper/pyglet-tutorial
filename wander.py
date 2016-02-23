@@ -29,11 +29,6 @@ class GameState(object):
             self.walk.send(key)
             self.events(key)
 
-    def events(self, key):
-        # not necessarily to use key
-        for f in walkEvents.members.values():
-            f()
-
     @coroutine
     def walk(self):
         step = 20
@@ -52,6 +47,11 @@ class GameState(object):
             elif symbol == key.DOWN:
                 self.y -= step if self.y >= 0 else 0
                 self.count += 1
+
+    def events(self, key):
+        # not necessarily to use key
+        for f in walkEvents.members.values():
+            f()
 
 
 gs = GameState()
